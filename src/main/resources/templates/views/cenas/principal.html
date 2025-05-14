@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/cenas/principal.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+
+    <title>AnimTracker - Minhas Cenas</title>
+</head>
+<body>
+<div th:replace="~{componentes/header :: header('cenas')}"></div>
+
+<div class="content">
+    <main>
+        <div class="container-fluid mt-4 mb-5">
+            <div class="row">
+                <div class="col-11 mx-auto">
+
+                    <div class="at-page__header-container mb-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <div class="at-page__header">
+                                <h2 class="at-page__title"><strong>Minhas Cenas</strong></h2>
+                                <p class="at-page__subtitle" style="color: white">Gerencie todas as suas cenas por aqui</p>
+                            </div>
+                            <div class="at-page__actions">
+                                <a th:href="@{/cena/criar}" class="btn btn-primary at-btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Cadastrar Cena
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="at-filter__container">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input id="searchInput" class="form-control at-filter__input"
+                                           type="text" placeholder="Buscar cena por código...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="visually-hidden">Filtrar por Status</label>
+                                <select id="statusFilter" class="form-select at-filter__select">
+                                    <option value="Todos os status" selected>Todos os status</option>
+                                    <option th:each="status : ${statusCenasOrdenados}"
+                                            th:value="${status.getDisplayName()}"
+                                            th:text="${status.getDisplayName()}">Status da Cena
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="estagioFilter" class="visually-hidden">Filtrar por Estágio</label>
+                                <select id="estagioFilter" class="form-select at-filter__select">
+                                    <option value="Todos os estágios" selected>Todos os estágios</option>
+                                    <option th:each="estagio : ${estagioCenas}"
+                                            th:value="${estagio.getDisplayName()}"
+                                            th:text="${estagio.getDisplayName()}">Estágio da Cena
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="projetoFilter" class="visually-hidden">Filtrar por Projeto</label>
+                                <select id="projetoFilter" class="form-select at-filter__select">
+                                    <option value="Todos os projetos" selected>Todos os projetos</option>
+                                    <option th:each="projeto : ${projetos}" th:if="${projetos != null}"
+                                            th:value="${projeto.nome}"
+                                            th:text="${projeto.nome}">Nome do Projeto
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="mt-4">
+
+                        <div id="cenas-content">
+                            <div th:each="status : ${statusCenasOrdenados}"
+                                 th:if="${cenasPorStatus != null and cenasPorStatus.get(status) != null and not #lists.isEmpty(cenasPorStatus.get(status))}">
+                                <h3 th:id="'status-' + ${status}"
+                                    class="at-group__title mb-3 pb-2"
+                                    th:text="${status.getDisplayName()}">Status da Cena</h3>
+
+                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4 mb-4">
+                                    <div class="col" th:each="cena : ${cenasPorStatus.get(status)}">
+                                        <div class="at-card h-100 shadow-sm"
+                                             th:data-estagio="${cena.estagio.getDisplayName()}"
+                                             th:data-projeto="${cena.projetoId}">
+                                            <div class="at-card__body d-flex flex-column p-3">
+
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <div class="at-card__header me-2">
+                                                        <h5 class="at-card__title mb-2" th:text="${cena.numero_codigo}">
+                                                            Cena #001
+                                                        </h5>
+                                                        <div class="d-flex flex-wrap gap-2 mb-1">
+                                                                <span class="at-badge at-badge--estagio"
+                                                                      th:classappend="${'at-badge--estagio-' + cena.estagio.name().toLowerCase()}"
+                                                                      th:text="${cena.estagio.getDisplayName()}">Estágio</span>
+                                                            <span class="at-badge at-badge--status"
+                                                                  th:classappend="${'at-badge--status-' + cena.status.name().toLowerCase()}"
+                                                                  th:text="${cena.status.getDisplayName()}">Status</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-link p-0 at-card__menu-button"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-expanded="false"
+                                                                aria-label="Opções da Cena">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end at-dropdown-menu">
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item"
+                                                                   th:href="@{/cena/editar/{id}(id=${cena.id})}">
+                                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item"
+                                                                   th:href="@{/cena/{id}(id=${cena.id})}">
+                                                                    <i class="bi bi-eye"></i> Ver Detalhes
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <hr class="dropdown-divider">
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item at-dropdown-item--danger" href="#"
+                                                                   data-bs-toggle="modal"
+                                                                   th:data-bs-target="'#confirmarExclusao' + ${cena.id}">
+                                                                    <i class="bi bi-trash"></i> Excluir
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="at-card__info-container mb-3">
+
+                                                    <div class="at-card__info-item">
+                                                        <i class="bi bi-folder2-open at-card__icon"></i>
+                                                        <span class="at-card__info-text">
+                                                                <span th:if="${projetos != null}">
+                                                                    <th:block th:each="projeto : ${projetos}">
+                                                                        <th:block th:if="${projeto.id == cena.projetoId}" th:text="${projeto.nome}">
+                                                                            Nome do Projeto
+                                                                        </th:block>
+                                                                    </th:block>
+                                                                </span>
+                                                            </span>
+                                                    </div>
+
+
+                                                    <div class="at-card__info-item">
+                                                        <i class="bi bi-film at-card__icon"></i>
+                                                        <span class="at-card__info-text">
+                                                                <span th:text="${cena.frames}">24</span> frames
+                                                            </span>
+                                                    </div>
+
+
+                                                    <div class="at-card__info-item"
+                                                         th:if="${cena.duracao != null}">
+                                                        <i class="bi bi-stopwatch at-card__icon"></i>
+                                                        <span class="at-card__info-text">
+                                                                <span th:text="${cena.duracao}">2.5</span> segundos
+                                                            </span>
+                                                    </div>
+
+
+                                                    <div class="at-card__info-item"
+                                                         th:if="${cena.data_previsao != null}">
+                                                        <i class="bi bi-calendar-check at-card__icon"></i>
+                                                        <span class="at-card__info-text">
+                                                                Entrega: <span th:text="${#temporals.format(cena.data_previsao, 'dd/MM/yyyy')}">01/01/2025</span>
+                                                            </span>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="mt-auto d-flex flex-wrap align-items-center gap-2 at-card__actions">
+                                                    <a class="btn btn-primary at-btn-primary flex-grow-1"
+                                                       th:href="@{/cena/{id}(id=${cena.id})}">
+                                                        <i class="bi bi-eye me-1"></i> Detalhes
+                                                    </a>
+                                                    <a class="btn at-btn-icon"
+                                                       th:href="@{/cena/editar/{id}(id=${cena.id})}"
+                                                       title="Editar cena" aria-label="Editar cena">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <div class="dropdown">
+                                                        <button class="btn at-btn-icon at-btn-icon--dropdown"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-expanded="false"
+                                                                title="Alterar status" aria-label="Alterar status">
+                                                            <i class="bi bi-toggle-on"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu at-dropdown-menu">
+                                                            <li th:each="opcaoStatus : ${statusCenasOrdenados}">
+                                                                <form th:action="@{/cena/mudar-status/{id}(id=${cena.id})}"
+                                                                      method="post" style="display: inline;">
+                                                                    <input type="hidden" name="status" th:value="${opcaoStatus}" />
+                                                                    <input type="hidden" name="_csrf" th:if="${_csrf}" th:value="${_csrf.token}" />
+                                                                    <button type="submit" class="dropdown-item at-dropdown-item"
+                                                                            th:classappend="${cena.status == opcaoStatus ? 'active' : ''}">
+                                                                        <i class="bi bi-check2-circle me-2"
+                                                                           th:if="${cena.status == opcaoStatus}"></i>
+                                                                        <span th:text="${opcaoStatus.getDisplayName()}">Status</span>
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="modal fade at-modal" th:id="'confirmarExclusao' + ${cena.id}"
+                                             tabindex="-1"
+                                             th:aria-labelledby="'confirmarExclusaoLabel' + ${cena.id}"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content at-modal__content">
+                                                    <div class="modal-header at-modal__header">
+                                                        <h5 class="modal-title at-modal__title"
+                                                            th:id="'confirmarExclusaoLabel' + ${cena.id}">
+                                                            Confirmar exclusão
+                                                        </h5>
+                                                        <button type="button" class="btn-close at-modal__close"
+                                                                data-bs-dismiss="modal"
+                                                                aria-label="Fechar"></button>
+                                                    </div>
+                                                    <div class="modal-body at-modal__body">
+                                                        <p>Você tem certeza que deseja excluir a cena <strong
+                                                                th:text="${cena.numero_codigo}">Código da Cena</strong>?</p>
+                                                        <p class="mt-2">Isso apagará todos os dados relacionados a esta cena!</p>
+                                                        <p class="at-modal__warning mt-2"><strong>Atenção:</strong>
+                                                            Esta ação não pode ser desfeita.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer at-modal__footer">
+                                                        <button type="button" class="btn btn-secondary at-btn-secondary"
+                                                                data-bs-dismiss="modal">Cancelar
+                                                        </button>
+                                                        <form th:action="@{/cena/remover/{id}(id=${cena.id})}"
+                                                              method="post" style="display:inline;">
+                                                            <input type="hidden" name="_csrf" th:if="${_csrf}" th:value="${_csrf.token}" />
+                                                            <button type="submit" class="btn btn-danger at-btn-danger">Excluir
+                                                                Permanentemente
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="at-empty-state"
+                             th:if="${cenasPorStatus == null || cenasPorStatus.isEmpty() || (cenas != null && cenas.isEmpty())}">
+                            <div class="at-empty-state__container p-4">
+                                <i class="bi bi-image mb-3 at-empty-state__icon"></i>
+                                <h4 class="at-empty-state__title mb-3">Nenhuma cena encontrada</h4>
+                                <p class="at-empty-state__message text-body-secondary mb-4">Parece que sua lista de cenas está vazia.
+                                    Que tal adicionar a primeira?
+                                </p>
+                                <div class="d-grid gap-2 col-md-6 mx-auto">
+                                    <a th:href="@{/cena/criar}"
+                                       class="btn btn-primary at-btn-primary">
+                                        <i class="bi bi-plus-circle me-2"></i>Adicionar Primeira Cena
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div id="noResultsContainer"
+                             class="at-empty-state"
+                             style="display: none;">
+                            <div class="at-empty-state__container p-4">
+                                <i class="bi bi-search mb-3 at-empty-state__icon"></i>
+                                <h4 class="at-empty-state__title mb-3">Nenhuma cena encontrada</h4>
+                                <p class="at-empty-state__message text-body-secondary mb-4">Sua busca não retornou resultados. Tente
+                                    mudar os filtros ou adicionar novas cenas.
+                                </p>
+                                <div class="d-grid gap-2 col-md-6 mx-auto">
+                                    <button id="resetFiltersBtn"
+                                            class="btn btn-primary at-btn-primary">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i>Limpar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{componentes/footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sistema de filtros
+        const filterSystem = {
+            searchInput: document.getElementById('searchInput'),
+            statusFilter: document.getElementById('statusFilter'),
+            estagioFilter: document.getElementById('estagioFilter'),
+            projetoFilter: document.getElementById('projetoFilter'),
+            contentContainer: document.getElementById('cenas-content'),
+            emptyResultsContainer: document.getElementById('noResultsContainer'),
+            resetButton: document.getElementById('resetFiltersBtn'),
+
+            initialize: function() {
+                // Configurar eventos de filtro
+                this.searchInput?.addEventListener('input', () => this.applyFilters());
+                this.statusFilter?.addEventListener('change', () => this.applyFilters());
+                this.estagioFilter?.addEventListener('change', () => this.applyFilters());
+                this.projetoFilter?.addEventListener('change', () => this.applyFilters());
+                this.resetButton?.addEventListener('click', () => this.resetFilters());
+
+                // Aplicar filtros iniciais
+                this.applyFilters();
+            },
+
+            applyFilters: function() {
+                const searchTerm = this.searchInput.value.toLowerCase().trim();
+                const statusValue = this.statusFilter.value;
+                const estagioValue = this.estagioFilter.value;
+                const projetoValue = this.projetoFilter.value;
+
+                let visibleCount = 0;
+                let totalCount = 0;
+
+                // Obter cabeçalhos de status
+                const statusHeadings = document.querySelectorAll('.at-group__title');
+
+                statusHeadings.forEach(heading => {
+                    const cardRow = heading.nextElementSibling;
+
+                    if (!cardRow || !cardRow.classList.contains('row')) {
+                        return;
+                    }
+
+                    let groupHasVisibleItems = false;
+                    const cards = cardRow.querySelectorAll('.at-card');
+                    totalCount += cards.length;
+
+                    cards.forEach(card => {
+                        const cardCol = card.closest('.col');
+                        const cardTitle = card.querySelector('.at-card__title')?.textContent.toLowerCase() || '';
+
+                        // Obter estágio e projeto da cena
+                        const cardEstagio = card.dataset.estagio || '';
+                        const cardProjeto = card.dataset.projeto || '';
+
+                        // Verificar se a cena corresponde aos filtros
+                        const matchesSearch = searchTerm === '' || cardTitle.includes(searchTerm);
+                        const matchesStatus = statusValue === 'Todos os status' || heading.textContent.trim() === statusValue;
+                        const matchesEstagio = estagioValue === 'Todos os estágios' || cardEstagio === estagioValue;
+
+                        // Determinar correspondência de projeto
+                        let matchesProjeto = true;
+                        if (projetoValue !== 'Todos os projetos') {
+                            // Busca pelo elemento que contém a informação do projeto
+                            const projetoElement = card.querySelector('.at-card__info-item:first-child .at-card__info-text');
+                            const textoProjeto = projetoElement ? projetoElement.textContent.trim() : '';
+
+                            // Verifica se o texto contém o nome do projeto selecionado
+                            matchesProjeto = textoProjeto.includes(projetoValue);
+                        }
+
+                        const shouldShow = matchesSearch && matchesStatus && matchesEstagio && matchesProjeto;
+
+                        if (cardCol) {
+                            cardCol.style.display = shouldShow ? '' : 'none';
+                        }
+
+                        if (shouldShow) {
+                            groupHasVisibleItems = true;
+                            visibleCount++;
+                        }
+                    });
+
+                    // Mostrar/ocultar o cabeçalho do grupo e seu conteúdo
+                    const headingContainer = heading.closest('div');
+                    if (headingContainer) {
+                        headingContainer.style.display = groupHasVisibleItems ? '' : 'none';
+                    }
+                });
+
+                // Exibir mensagem adequada quando não há resultados
+                if (totalCount > 0) {
+                    if (visibleCount === 0) {
+                        this.contentContainer.style.display = 'none';
+                        this.emptyResultsContainer.style.display = '';
+                    } else {
+                        this.contentContainer.style.display = '';
+                        this.emptyResultsContainer.style.display = 'none';
+                    }
+                }
+            },
+
+            resetFilters: function() {
+                this.searchInput.value = '';
+                this.statusFilter.value = 'Todos os status';
+                this.estagioFilter.value = 'Todos os estágios';
+                this.projetoFilter.value = 'Todos os projetos';
+                this.applyFilters();
+            }
+        };
+
+        // Inicializar sistema de filtros
+        filterSystem.initialize();
+    });
+</script>
+</body>
+</html>

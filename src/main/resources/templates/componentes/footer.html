@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<footer th:fragment="footer" class="at-footer">
+    <div class="container-fluid">
+        <div class="row py-2">
+            <div class="col-md-4 at-footer__column">
+                <div class="at-footer__column-content">
+                    <a class="at-footer__brand" href="/dashboard">AnimTracker</a>
+                    <p class="at-footer__description">Gerencie seus projetos de animação</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 at-footer__column">
+                <div class="at-footer__column-content">
+                    <div class="at-footer__links-container">
+                        <a th:href="@{/dashboard}" class="at-footer__link">Dashboard</a>
+                        <a th:href="@{/cenas}" class="at-footer__link">Cenas</a>
+                        <a th:href="@{/projetos}" class="at-footer__link">Projetos</a>
+                        <a th:href="@{/suporte}" class="at-footer__link">Suporte</a>
+                        <a th:href="@{/termos}" class="at-footer__link">Termos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 at-footer__column">
+                <div class="at-footer__column-content">
+                    <div class="at-footer__social-icons">
+                        <a href="#" class="at-footer__social-icon"><i class="bi bi-envelope"></i></a>
+                        <a href="#" class="at-footer__social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="at-footer__social-icon"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row border-top py-2">
+            <div class="col-12 text-center">
+                <p class="mb-0 small at-footer__copyright">&copy; <span id="currentYear" th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> AnimTracker. Todos os direitos reservados.</p>
+            </div>
+        </div>
+
+        <button id="backToTop" class="back-to-top">
+            <i class="bi bi-arrow-up"></i>
+        </button>
+    </div>
+</footer>
+</body>
+</html>

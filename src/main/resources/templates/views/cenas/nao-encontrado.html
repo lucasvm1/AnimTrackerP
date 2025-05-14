@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/cenas/nao-encontrado.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <title>AnimTracker - Cena Não Encontrada</title>
+</head>
+
+<body>
+
+<div th:replace="~{componentes/header :: header('cenas')}"></div>
+
+<div class="content">
+    <main>
+        <div class="at-error__page-container">
+            <div class="at-error__container-fluid">
+
+                <div class="card at-error__card at-error__card--not-found">
+                    <div class="at-error__container">
+                        <div class="at-error__code">404</div>
+
+                        <i class="bi bi-film at-error__icon"></i>
+
+                        <h2 class="at-error__mensagem">Oops! Esta cena não existe</h2>
+                        <p id="mensagem-secundaria" class="at-error__mensagem-secundaria"></p>
+
+                        <a th:href="@{/cenas}" class="btn btn-primary at-error__btn-primary mt-4">
+                            <i class="bi bi-arrow-left"></i> Voltar para a lista de cenas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{componentes/footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mensagensCenaNaoEncontrada = [
+            "Procuramos frame por frame, mas essa cena parece ter sido cortada na edição final. 🎬",
+            "Esta cena é tão misteriosa que nem mesmo nossos melhores animadores conseguem encontrá-la. 🕵️‍♂️",
+            "A cena que você procura deve ter pulado para outro storyboard. 📋",
+            "Hmm... ou esta cena nunca existiu, ou foi deletada na sala de montagem. ✂️",
+            "Essa cena está mais difícil de encontrar que um erro de continuidade em um filme de qualidade! 🔍",
+            "Procuramos em cada keyframe do sistema, mas esta cena simplesmente desapareceu! 💨",
+            "Cena não encontrada. Talvez esteja em pós-produção e volte em breve. 🎞️",
+            "Parece que esta cena está fora de foco e não conseguimos localizá-la. 📽️",
+            "Esta cena está jogando 'esconde-esconde' e parece que está vencendo! 🙈",
+            "A cena que você procura deve ter caído no buraco de coelho da animação. 🐰"
+        ];
+        const mensagemAleatoria = mensagensCenaNaoEncontrada[Math.floor(Math.random() * mensagensCenaNaoEncontrada.length)];
+        document.getElementById('mensagem-secundaria').innerHTML = mensagemAleatoria;
+    });
+</script>
+</body>
+</html>

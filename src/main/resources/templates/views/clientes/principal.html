@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/clientes/principal.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>AnimTracker - Meus Clientes</title>
+</head>
+<body>
+<div th:replace="~{componentes/header:: header('clientes')}"></div>
+
+<div class="content">
+    <main>
+        <div class="container-fluid mt-4 mb-5">
+            <div class="row">
+                <div class="col-11 mx-auto">
+                    <!-- Cabeçalho da página -->
+                    <div class="at-page__header-container mb-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <div class="at-page__header">
+                                <h2 class="at-page__title"><strong>Meus Clientes</strong></h2>
+                                <p class="at-page__subtitle" style="color: white">Gerencie todos seus clientes por aqui</p>
+                            </div>
+                            <div class="at-page__actions">
+                                <a th:href="@{/cliente/criar}" class="btn btn-primary at-btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Cadastrar Cliente
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção de filtros -->
+                    <div class="at-filter__container">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input id="searchInput" class="form-control at-filter__input"
+                                           type="text" placeholder="Buscar cliente por nome...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="categoriaFilter" class="visually-hidden">Filtrar por Categoria</label>
+                                <select id="categoriaFilter" class="form-select at-filter__select">
+                                    <option value="Todas as categorias" selected>Todas as categorias</option>
+                                    <option th:each="cat : ${clientesCategorias}"
+                                            th:value="${cat.getDisplayName()}"
+                                            th:text="${cat.getDisplayName()}">Categoria Placeholder
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tipoFilter" class="visually-hidden">Filtrar por Tipo</label>
+                                <select id="tipoFilter" class="form-select at-filter__select">
+                                    <option value="Todos os tipos" selected>Todos os tipos</option>
+                                    <option th:each="tipo : ${clientesTipos}"
+                                            th:value="${tipo.getDisplayName()}"
+                                            th:text="${tipo.getDisplayName()}">Tipo Placeholder
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo principal -->
+                    <div class="mt-4">
+                        <!-- Clientes agrupados por letra -->
+                        <div id="clientes-content">
+                            <div th:each="letra : ${letrasDisponiveis}">
+                                <h3 th:id="'grupo-' + ${letra}"
+                                    class="at-group__title mb-3 pb-2"
+                                    th:text="${letra}">A</h3>
+
+                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4 mb-4">
+                                    <div class="col" th:each="cliente : ${clientesPorLetra.get(letra)}">
+                                        <div class="at-card h-100 shadow-sm">
+                                            <div class="at-card__body d-flex flex-column p-3">
+                                                <!-- Cabeçalho do card -->
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <div class="at-card__header me-2">
+                                                        <h5 class="at-card__title mb-3" th:text="${cliente.nome}">Nome do Cliente</h5>
+                                                        <div class="d-flex flex-wrap gap-2 mb-0">
+                                                                <span class="at-badge at-badge--categoria"
+                                                                      th:text="${cliente.categoria != null ? cliente.categoria.displayName : 'Não definido'}">Categoria</span>
+                                                            <span class="at-badge at-badge--tipo"
+                                                                  th:text="${cliente.tipo != null ? cliente.tipo.displayName : 'Não definido'}">Tipo</span>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Menu de opções -->
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-link p-0 at-card__menu-button"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-expanded="false"
+                                                                aria-label="Opções do Cliente">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end at-dropdown-menu">
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item"
+                                                                   th:href="@{/cliente/editar/{id}(id=${cliente.id})}">
+                                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item"
+                                                                   th:href="@{/projeto/criar}">
+                                                                    <i class="bi bi-plus-circle"></i> Novo Projeto
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <hr class="dropdown-divider">
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item at-dropdown-item at-dropdown-item--danger" href="#"
+                                                                   data-bs-toggle="modal"
+                                                                   th:data-bs-target="'#confirmarExclusao' + ${cliente.id}">
+                                                                    <i class="bi bi-trash"></i> Excluir
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Informações do cliente -->
+                                                <div class="at-card__info-container mb-3">
+                                                    <!-- Telefone -->
+                                                    <div class="at-card__info-item at-card__info-item--copyable">
+                                                        <i class="bi bi-telephone at-card__icon"></i>
+                                                        <span class="at-card__info-text at-card__info-text--copyable"
+                                                              th:text="${cliente.telefone_principal != null and !cliente.telefone_principal.isEmpty() ? cliente.telefone_principal : 'Não informado'}"
+                                                              th:data-clipboard="${cliente.telefone_principal != null and !cliente.telefone_principal.isEmpty() ? cliente.telefone_principal : ''}"
+                                                              th:title="${cliente.telefone_principal != null and !cliente.telefone_principal.isEmpty() ? 'Clique para copiar' : ''}">Telefone</span>
+                                                        <button class="btn btn-sm p-0 ms-auto at-card__copy-button"
+                                                                th:if="${cliente.telefone_principal != null and !cliente.telefone_principal.isEmpty()}"
+                                                                th:data-clipboard="${cliente.telefone_principal}"
+                                                                title="Copiar telefone"
+                                                                aria-label="Copiar telefone">
+                                                            <i class="bi bi-clipboard"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Email -->
+                                                    <div class="at-card__info-item at-card__info-item--copyable">
+                                                        <i class="bi bi-envelope at-card__icon"></i>
+                                                        <span class="at-card__info-text at-card__info-text--copyable"
+                                                              style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                                              th:text="${cliente.email_principal != null and !cliente.email_principal.isEmpty() ? cliente.email_principal : 'Não informado'}"
+                                                              th:data-clipboard="${cliente.email_principal != null and !cliente.email_principal.isEmpty() ? cliente.email_principal : ''}"
+                                                              th:title="${cliente.email_principal != null and !cliente.email_principal.isEmpty() ? 'Clique para copiar' : ''}">Email</span>
+                                                        <button class="btn btn-sm p-0 ms-auto at-card__copy-button"
+                                                                th:if="${cliente.email_principal != null and !cliente.email_principal.isEmpty()}"
+                                                                th:data-clipboard="${cliente.email_principal}"
+                                                                title="Copiar email" aria-label="Copiar email">
+                                                            <i class="bi bi-clipboard"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Projetos -->
+                                                    <div class="at-card__info-item at-card__info-item--projetos-counter mt-1"
+                                                         th:if="${clienteProjetos != null}">
+                                                        <i class="bi bi-folder at-card__icon"></i>
+                                                        <span class="at-card__info-text"><span
+                                                                th:text="${#maps.containsKey(clienteProjetos, cliente.id) ? #lists.size(clienteProjetos[cliente.id]) : '0'}">0</span> projetos</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Ações do card -->
+                                                <div class="mt-auto d-flex flex-wrap align-items-center gap-2 at-card__actions">
+                                                    <a class="btn btn-primary at-btn-primary flex-grow-1"
+                                                       th:href="@{/cliente/{id}(id=${cliente.id})}">
+                                                        <i class="bi bi-eye me-1"></i> Detalhes
+                                                    </a>
+                                                    <!-- Botões de contato -->
+                                                    <a th:if="${cliente.email_principal != null and !cliente.email_principal.isEmpty()}"
+                                                       class="btn at-btn-icon"
+                                                       th:href="'mailto:' + ${cliente.email_principal}"
+                                                       title="Enviar e-mail" aria-label="Enviar e-mail">
+                                                        <i class="bi bi-envelope"></i>
+                                                    </a>
+                                                    <a th:if="${cliente.telefone_principal != null and !cliente.telefone_principal.isEmpty()}"
+                                                       class="btn at-btn-icon"
+                                                       th:href="'tel:' + ${cliente.telefone_principal}"
+                                                       title="Ligar" aria-label="Ligar">
+                                                        <i class="bi bi-telephone"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal de confirmação de exclusão -->
+                                        <div class="modal fade at-modal" th:id="'confirmarExclusao' + ${cliente.id}"
+                                             tabindex="-1"
+                                             th:aria-labelledby="'confirmarExclusaoLabel' + ${cliente.id}"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content at-modal__content">
+                                                    <div class="modal-header at-modal__header">
+                                                        <h5 class="modal-title at-modal__title"
+                                                            th:id="'confirmarExclusaoLabel' + ${cliente.id}">
+                                                            Confirmar exclusão
+                                                        </h5>
+                                                        <button type="button" class="btn-close at-modal__close"
+                                                                data-bs-dismiss="modal"
+                                                                aria-label="Fechar"></button>
+                                                    </div>
+                                                    <div class="modal-body at-modal__body">
+                                                        <p>Você tem certeza que deseja excluir o cliente <strong
+                                                                th:text="${cliente.nome}">Nome do Cliente</strong>?</p>
+                                                        <p class="mt-2">Isso apagará todos os projetos e cenas
+                                                            relacionadas a esse cliente!</p>
+                                                        <p class="at-modal__warning mt-2"><strong>Atenção:</strong>
+                                                            Esta ação não pode ser desfeita.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer at-modal__footer">
+                                                        <button type="button" class="btn btn-secondary at-btn-secondary"
+                                                                data-bs-dismiss="modal">Cancelar
+                                                        </button>
+                                                        <form th:action="@{/cliente/remover/{id}(id=${cliente.id})}"
+                                                              method="post" style="display:inline;">
+                                                            <button type="submit" class="btn btn-danger at-btn-danger">Excluir
+                                                                Permanentemente
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado vazio - sem clientes -->
+                        <div class="at-empty-state"
+                             th:if="${#maps.isEmpty(clientesPorLetra) || #lists.isEmpty(letrasDisponiveis)}">
+                            <div class="at-empty-state__container p-4">
+                                <i class="bi bi-person-bounding-box mb-3 at-empty-state__icon"></i>
+                                <h4 class="at-empty-state__title mb-3">Nenhum cliente encontrado</h4>
+                                <p class="at-empty-state__message text-body-secondary mb-4">Parece que sua lista de clientes está vazia.
+                                    Que tal adicionar o primeiro?</p>
+                                <div class="d-grid gap-2 col-md-6 mx-auto">
+                                    <a th:href="@{/cliente/criar}"
+                                       class="btn btn-primary at-btn-primary">
+                                        <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Cliente
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado vazio para resultados filtrados - controlado por JavaScript -->
+                        <div id="noResultsContainer"
+                             class="at-empty-state"
+                             style="display: none;">
+                            <div class="at-empty-state__container p-4">
+                                <i class="bi bi-search mb-3 at-empty-state__icon"></i>
+                                <h4 class="at-empty-state__title mb-3">Nenhum cliente encontrado</h4>
+                                <p class="at-empty-state__message text-body-secondary mb-4">Sua busca não retornou resultados. Tente
+                                    mudar os filtros ou adicionar novos clientes.</p>
+                                <div class="d-grid gap-2 col-md-6 mx-auto">
+                                    <button id="resetFiltersBtn"
+                                            class="btn btn-primary at-btn-primary">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i>Limpar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{componentes/footer :: footer}"></footer>
+
+<!-- Toast para feedback de cópia -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1056">
+    <div id="copyToast" class="toast at-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header at-toast__header">
+            <i class="bi bi-clipboard-check-fill me-2 text-success"></i>
+            <strong class="me-auto">AnimTracker</strong>
+            <small>Agora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body at-toast__body">
+            Copiado para a área de transferência!
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sistema de filtros
+        const filterSystem = {
+            searchInput: document.getElementById('searchInput'),
+            categoriaFilter: document.getElementById('categoriaFilter'),
+            tipoFilter: document.getElementById('tipoFilter'),
+            contentContainer: document.getElementById('clientes-content'),
+            emptyResultsContainer: document.getElementById('noResultsContainer'),
+            resetButton: document.getElementById('resetFiltersBtn'),
+
+            initialize: function() {
+                // Configurar eventos de filtro
+                this.searchInput?.addEventListener('input', () => this.applyFilters());
+                this.categoriaFilter?.addEventListener('change', () => this.applyFilters());
+                this.tipoFilter?.addEventListener('change', () => this.applyFilters());
+                this.resetButton?.addEventListener('click', () => this.resetFilters());
+
+                // Inicializar sistema de cópia
+                this.initCopySystem();
+
+                // Aplicar filtros iniciais
+                this.applyFilters();
+            },
+
+            initCopySystem: function() {
+                // Toast de cópia
+                const copyToastEl = document.getElementById('copyToast');
+                const copyToast = new bootstrap.Toast(copyToastEl);
+
+                // Seleciona todos os elementos com dados para copiar
+                const copyButtons = document.querySelectorAll('.at-card__copy-button');
+                const copyableTexts = document.querySelectorAll('.at-card__info-text--copyable');
+
+                // Função que copia texto para a área de transferência
+                function copyToClipboard(text) {
+                    if (text && text.trim() !== '' && navigator.clipboard) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyToast.show();
+                        }).catch(err => {
+                            console.error('Erro ao copiar:', err);
+                        });
+                    }
+                }
+
+                // Aplica a função de cópia aos botões
+                copyButtons.forEach(button => {
+                    const textToCopy = button.getAttribute('data-clipboard');
+                    if (textToCopy && textToCopy.trim() !== '') {
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            copyToClipboard(textToCopy);
+
+                            // Efeito de flash para feedback visual
+                            const container = this.closest('.at-card__info-item');
+                            if (container) {
+                                container.classList.add('at-card__info-item--flash');
+                                setTimeout(() => {
+                                    container.classList.remove('at-card__info-item--flash');
+                                }, 500);
+                            }
+                        });
+                    }
+                });
+
+                // Adiciona evento de cópia ao clicar no texto
+                copyableTexts.forEach(element => {
+                    const textToCopy = element.getAttribute('data-clipboard');
+                    if (textToCopy && textToCopy.trim() !== '') {
+                        element.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            copyToClipboard(textToCopy);
+
+                            // Efeito de flash para feedback visual
+                            const container = this.closest('.at-card__info-item');
+                            if (container) {
+                                container.classList.add('at-card__info-item--flash');
+                                setTimeout(() => {
+                                    container.classList.remove('at-card__info-item--flash');
+                                }, 500);
+                            }
+                        });
+                    }
+                });
+            },
+
+            applyFilters: function() {
+                const searchTerm = this.searchInput.value.toLowerCase().trim();
+                const categoriaValue = this.categoriaFilter.value;
+                const tipoValue = this.tipoFilter.value;
+
+                let visibleCount = 0;
+                let totalCount = 0;
+
+                // Obter cabeçalhos de letra
+                const letterHeadings = document.querySelectorAll('.at-group__title');
+
+                letterHeadings.forEach(heading => {
+                    const cardRow = heading.nextElementSibling;
+
+                    if (!cardRow || !cardRow.classList.contains('row')) {
+                        return;
+                    }
+
+                    let groupHasVisibleItems = false;
+                    const cards = cardRow.querySelectorAll('.at-card');
+                    totalCount += cards.length;
+
+                    cards.forEach(card => {
+                        const cardCol = card.closest('.col');
+                        const cardTitle = card.querySelector('.at-card__title')?.textContent.toLowerCase() || '';
+
+                        // Obter as badges de categoria e tipo
+                        const categoriaBadge = card.querySelector('.at-badge--categoria');
+                        const tipoBadge = card.querySelector('.at-badge--tipo');
+
+                        const clienteCategoria = categoriaBadge ? categoriaBadge.textContent : '';
+                        const clienteTipo = tipoBadge ? tipoBadge.textContent : '';
+
+                        // Verificar se o cliente corresponde aos filtros
+                        const matchesSearch = searchTerm === '' || cardTitle.includes(searchTerm);
+                        const matchesCategoria = categoriaValue === 'Todas as categorias' || clienteCategoria === categoriaValue;
+                        const matchesTipo = tipoValue === 'Todos os tipos' || clienteTipo === tipoValue;
+
+                        const shouldShow = matchesSearch && matchesCategoria && matchesTipo;
+
+                        if (cardCol) {
+                            cardCol.style.display = shouldShow ? '' : 'none';
+                        }
+
+                        if (shouldShow) {
+                            groupHasVisibleItems = true;
+                            visibleCount++;
+                        }
+                    });
+
+                    // Mostrar/ocultar o cabeçalho do grupo e seu conteúdo
+                    heading.style.display = groupHasVisibleItems ? '' : 'none';
+                    if (cardRow) {
+                        cardRow.style.display = groupHasVisibleItems ? '' : 'none';
+                    }
+                });
+
+                // Exibir mensagem adequada quando não há resultados
+                if (totalCount > 0) {
+                    if (visibleCount === 0) {
+                        this.contentContainer.style.display = 'none';
+                        this.emptyResultsContainer.style.display = '';
+                    } else {
+                        this.contentContainer.style.display = '';
+                        this.emptyResultsContainer.style.display = 'none';
+                    }
+                }
+            },
+
+            resetFilters: function() {
+                this.searchInput.value = '';
+                this.categoriaFilter.value = 'Todas as categorias';
+                this.tipoFilter.value = 'Todos os tipos';
+                this.applyFilters();
+            }
+        };
+
+        // Inicializar sistema de filtros
+        filterSystem.initialize();
+    });
+</script>
+</body>
+</html>

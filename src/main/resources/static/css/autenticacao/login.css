@@ -1,0 +1,216 @@
+:root {
+    /* Paleta e variáveis globais para fácil manutenção */
+    --primary-gradient: linear-gradient(135deg, #9d8eff, #a64ba2);
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #e0e0e0;
+    --text-muted: #b0b0b0;
+    --input-bg: rgba(157, 142, 255, 0.05);
+    --input-border: #2c2c44;
+}
+
+/* Reset e padronização de fonte e box-sizing */
+* {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Layout centralizado para página de login */
+.at-login {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Card visual do formulário de login */
+.at-login__card {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Nome do sistema estilizado com gradiente */
+.at-login__brand {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 10px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Subtítulo com cor atenuada */
+.at-login__subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+/* Agrupamento do campo de e-mail com ícone */
+.at-login__input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.at-login__input-group i.bi-envelope {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.at-login__input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-color);
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Campo de senha flexível com ícone e botão de mostrar/ocultar */
+.at-login__password-input-group {
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.at-login__password-input-group i.bi-lock {
+    padding: 0 10px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.at-login__password-input-group input {
+    flex: 1;
+    padding: 15px 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.at-login__password-input-group input:focus {
+    outline: none;
+}
+
+.at-login__password-input-group .toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px 10px;
+    margin-left: 12px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.at-login__password-input-group .toggle-password:hover {
+    color: var(--text-color);
+}
+
+/* Animação de brilho no botão principal */
+@keyframes glow-slide {
+    0% {
+        left: -80%;
+    }
+    100% {
+        left: 130%;
+    }
+}
+
+/* Botão principal de login com gradiente */
+.at-login__btn-primary {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary-gradient);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: transform 0.1s ease;
+}
+
+.at-login__btn-primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: skewX(-25deg);
+    z-index: 0;
+    animation: glow-slide 5s linear infinite;
+}
+
+.at-login__btn-primary:hover::before {
+    left: 150%;
+}
+
+.at-login__btn-primary:hover {
+    transform: translateY(-2px);
+    transition: transform 0.5s ease;
+}
+
+/* Botão de login com Google, visual flat e destaque no ícone */
+.at-login__btn-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.at-login__btn-google:hover{
+    transform: translateY(-2px);
+    transition: transform 0.5s ease;
+}
+
+.at-login__btn-google i {
+    margin-right: 10px;
+    color: #ea4335;
+}
+
+/* Links para ações auxiliares: esqueceu senha e registrar */
+.at-login__links {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.at-login__links a {
+    color: #9d8eff;
+    text-decoration: none;
+}
+
+.at-login__links a:hover {
+    text-decoration: underline;
+}

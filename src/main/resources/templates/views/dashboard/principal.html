@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AnimTracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard/principal.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{componentes/header :: header(currentPage='dashboard')}"></div>
+<main class="at-dashboard__container">
+    <div class="container-xxl">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="at-dashboard__title mb-1">Dashboard</h1>
+                <p class="at-dashboard__subtitle mb-0">
+                    Olá, <span th:text="${usuario != null ? usuario.nome : 'Usuário'}">Usuário</span>! Acompanhe suas métricas.
+                </p>
+            </div>
+        </div>
+        <div class="at-filter__container mb-4">
+            <form method="GET" th:action="@{/dashboard}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md">
+                        <label for="projetoIdFiltro" class="visually-hidden">Filtrar por Projeto</label>
+                        <select id="projetoIdFiltro" name="projetoIdFiltro" class="form-select at-filter__select">
+                            <option value="">Todos os Projetos</option>
+                            <option th:each="proj : ${projetosParaFiltro}" th:value="${proj.id}" th:text="${proj.nome}" th:selected="${proj.id != null && proj.id.equals(projetoIdFiltroSelecionado)}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label for="dataInicioFiltro" class="visually-hidden">Data de Início</label>
+                        <input type="date" id="dataInicioFiltro" name="dataInicioFiltro" class="form-control at-filter__input" th:value="${dataInicioFiltroSelecionado}">
+                    </div>
+                    <div class="col-md">
+                        <label for="dataFimFiltro" class="visually-hidden">Data Final</label>
+                        <input type="date" id="dataFimFiltro" name="dataFimFiltro" class="form-control at-filter__input" th:value="${dataFimFiltroSelecionado}">
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn at-btn-primary w-100">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-9">
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="at-metric-card">
+                            <i class="bi bi-film at-metric-card__icon at-metric-card__icon--cenas"></i>
+                            <div class="at-metric-card__content">
+                                <div class="at-metric-card__value" th:text="${totalCenasFeitas ?: 0}">0</div>
+                                <div class="at-metric-card__label">Total de Cenas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="at-metric-card">
+                            <i class="bi bi-folder-symlink-fill at-metric-card__icon at-metric-card__icon--projetos"></i>
+                            <div class="at-metric-card__content">
+                                <div class="at-metric-card__value" th:text="${projetosEmAndamento ?: 0}">0</div>
+                                <div class="at-metric-card__label">Projetos Ativos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="at-metric-card">
+                            <i class="bi bi-speedometer2 at-metric-card__icon at-metric-card__icon--performance"></i>
+                            <div class="at-metric-card__content">
+                                <div class="at-metric-card__value" th:text="${segundosPorHora ?: '0.00'}">0.00</div>
+                                <div class="at-metric-card__label">Segs/Cena/Hora</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="at-metric-card">
+                            <i class="bi bi-collection-play-fill at-metric-card__icon at-metric-card__icon--cenas"></i>
+                            <div class="at-metric-card__content">
+                                <div class="at-metric-card__value" th:text="${cenasEmAndamento ?: 0}">0</div>
+                                <div class="at-metric-card__label">Cenas Ativas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="at-dashboard__section">
+                            <h2 class="at-dashboard__section-title">Desempenho das Cenas</h2>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-check-circle-fill at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${cenasAprovadas ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Aprovadas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-play-circle-fill at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${cenasEmAndamento ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Em Andamento</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-pause-circle-fill at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${cenasPausadas ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Pausadas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-easel2-fill at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${totalCenasPose ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Em Pose</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-person-video3 at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${totalCenasAnimacao ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Em Animação</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-vector-pen at-metric-card__icon at-metric-card__icon--cenas"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${totalCenasCorrecao ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Em Correção</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="at-dashboard__section">
+                            <h2 class="at-dashboard__section-title">Visão Geral</h2>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-folder-check at-metric-card__icon at-metric-card__icon--projetos"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${projetosConcluidos ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Projetos Concluídos</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-stopwatch-fill at-metric-card__icon at-metric-card__icon--tempo"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${duracaoTotalSegundosCenas ?: '0.00'}">0</div>
+                                            <div class="at-metric-card__label">Total Segundos Entregues</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-clock-history at-metric-card__icon at-metric-card__icon--tempo"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${tempoMedioPorCenaHoras ?: '0.00'}">0.00</div>
+                                            <div class="at-metric-card__label">Tempo Médio/Cena (h)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="at-metric-card at-metric-card--detailed">
+                                        <i class="bi bi-people-fill at-metric-card__icon at-metric-card__icon--clientes"></i>
+                                        <div class="at-metric-card__content">
+                                            <div class="at-metric-card__value" th:text="${clientesCadastrados ?: 0}">0</div>
+                                            <div class="at-metric-card__label">Clientes Cadastrados</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="at-dashboard__sidebar">
+                    <div class="at-dashboard__sidebar-title-container">
+                        <h3 class="at-dashboard__sidebar-title-text">Minhas Cenas</h3>
+                        <a th:href="@{/cena/criar}" class="at-dashboard__add-btn" title="Adicionar nova cena" aria-label="Adicionar nova cena">
+                            <i class="bi bi-plus-lg"></i> </a>
+                        </a>
+                    </div>
+                    <ul class="nav nav-tabs at-dashboard__sidebar-tabs" id="cenasTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="andamento-tab" data-bs-toggle="tab" data-bs-target="#andamento-tab-pane" type="button" role="tab" aria-controls="andamento-tab-pane" aria-selected="true">
+                                Em Produção (<span th:text="${#lists.size(cenasPainelEmAndamento)}">0</span>)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="naoIniciadas-tab" data-bs-toggle="tab" data-bs-target="#naoIniciadas-tab-pane" type="button" role="tab" aria-controls="naoIniciadas-tab-pane" aria-selected="false">
+                                Não Iniciadas (<span th:text="${#lists.size(cenasPainelNaoIniciadas)}">0</span>)
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="cenasTabContent">
+                        <div class="tab-pane fade show active" id="andamento-tab-pane" role="tabpanel" aria-labelledby="andamento-tab" tabindex="0">
+                            <ul class="at-dashboard__scene-list mt-2" th:if="${not #lists.isEmpty(cenasPainelEmAndamento)}">
+                                <li th:each="cena : ${cenasPainelEmAndamento}" class="at-dashboard__scene-list-item">
+                                    <a th:href="@{/cena/{id}(id=${cena.id})}" class="at-dashboard__scene-info-link" th:aria-label="'Detalhes da cena ' + ${cena.numero_codigo}">
+                                        <div class="at-dashboard__scene-info">
+                                            <strong class="at-dashboard__scene-code" th:text="${cena.numero_codigo}">C001</strong>
+                                            <small class="at-dashboard__scene-project" th:if="${mapaNomesProjetos != null && mapaNomesProjetos.containsKey(cena.projetoId)}">
+                                                <i class="bi bi-folder2-open"></i>
+                                                <span th:text="${mapaNomesProjetos.get(cena.projetoId)}">Nome do Projeto</span>
+                                            </small>
+                                        </div>
+                                    </a>
+                                    <a th:href="@{/cena/editar/{id}(id=${cena.id})}" class="btn btn-sm at-dashboard__scene-edit-btn" aria-label="Editar cena">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p th:if="${#lists.isEmpty(cenasPainelEmAndamento)}" class="at-dashboard__sidebar-empty mt-3">Nenhuma cena em andamento no momento.</p>
+                        </div>
+                        <div class="tab-pane fade" id="naoIniciadas-tab-pane" role="tabpanel" aria-labelledby="naoIniciadas-tab" tabindex="0">
+                            <ul class="at-dashboard__scene-list mt-2" th:if="${not #lists.isEmpty(cenasPainelNaoIniciadas)}">
+                                <li th:each="cena : ${cenasPainelNaoIniciadas}" class="at-dashboard__scene-list-item">
+                                    <a th:href="@{/cena/{id}(id=${cena.id})}" class="at-dashboard__scene-info-link" th:aria-label="'Detalhes da cena ' + ${cena.numero_codigo}">
+                                        <div class="at-dashboard__scene-info">
+                                            <strong class="at-dashboard__scene-code" th:text="${cena.numero_codigo}">C001</strong>
+                                            <small class="at-dashboard__scene-project" th:if="${mapaNomesProjetos != null && mapaNomesProjetos.containsKey(cena.projetoId)}">
+                                                <i class="bi bi-folder2-open"></i>
+                                                <span th:text="${mapaNomesProjetos.get(cena.projetoId)}">Nome do Projeto</span>
+                                            </small>
+                                        </div>
+                                    </a>
+                                    <a th:href="@{/cena/editar/{id}(id=${cena.id})}" class="btn btn-sm at-dashboard__scene-edit-btn" aria-label="Editar cena">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p th:if="${#lists.isEmpty(cenasPainelNaoIniciadas)}" class="at-dashboard__sidebar-empty mt-3">Todas as cenas já foram iniciadas ou não há cenas cadastradas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="~{componentes/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

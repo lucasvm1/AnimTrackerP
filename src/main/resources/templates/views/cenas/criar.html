@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+  <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/cenas/criar.css}">
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+
+  <title>AnimTracker - Criar Nova Cena</title>
+  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<div th:replace="~{componentes/header :: header('cenas')}"></div>
+
+<div class="content">
+  <main>
+    <div class="at-scene__page-container">
+      <div class="at-scene__container-fluid">
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <span th:text="${erro}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <span th:text="${sucesso}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/cena/criar}" method="post" id="criarCenaForm">
+          <div class="at-scene__actions-container">
+            <button type="submit" class="btn btn-primary at-scene__btn-primary">
+              <i class="bi bi-check-circle me-2"></i>Salvar Cena
+            </button>
+            <a class="btn btn-secondary at-scene__btn-secondary" th:href="@{/cenas}">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </a>
+          </div>
+
+          <div class="card at-scene__card">
+            <div class="at-scene__card-header">
+              <div class="at-scene__icon-wrapper">
+                <i class="bi bi-film at-scene__icon"></i>
+              </div>
+              <h2 class="at-scene__title" id="sceneTitlePreview">Nova Cena</h2>
+            </div>
+
+            <div class="at-scene__card-body">
+              <h3 class="at-scene__section-title">Informações Principais</h3>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="numero_codigo" class="form-label at-scene__form-label">Número/Código da Cena <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control at-scene__form-input" id="numero_codigo" name="numero_codigo" placeholder="Ex: C001, EP01_SC002" required>
+                  <div class="invalid-feedback">
+                    Por favor, informe o código da cena.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="projetoId" class="form-label at-scene__form-label">Projeto <span class="text-danger">*</span></label>
+                  <select class="form-select at-scene__form-select" id="projetoId" name="projetoId" required>
+                    <option value="" disabled selected>Selecione um projeto</option>
+                    <option th:each="projeto : ${projetos}" th:value="${projeto.id}" th:text="${projeto.nome}">Nome do Projeto</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Por favor, selecione o projeto.
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="status" class="form-label at-scene__form-label">Status <span class="text-danger">*</span></label>
+                  <select class="form-select at-scene__form-select" id="status" name="status" required>
+                    <option value="" disabled selected>Selecione um status</option>
+                    <option th:each="s : ${statusCenas}" th:value="${s.name()}" th:text="${s.getDisplayName()}">Status</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Por favor, selecione o status da cena.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="estagio" class="form-label at-scene__form-label">Estágio <span class="text-danger">*</span></label>
+                  <select class="form-select at-scene__form-select" id="estagio" name="estagio" required>
+                    <option value="" disabled selected>Selecione um estágio</option>
+                    <option th:each="e : ${estagioCenas}" th:value="${e.name()}" th:text="${e.getDisplayName()}">Estágio</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Por favor, selecione o estágio da cena.
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="at-scene__section-title">Detalhes Técnicos</h3>
+              <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                  <label for="frames" class="form-label at-scene__form-label">Frames <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control at-scene__form-input" id="frames" name="frames" placeholder="Nº de frames" min="0" required>
+                  <div class="invalid-feedback">
+                    Informe um número válido de frames.
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="duracao" class="form-label at-scene__form-label">Duração (segundos)</label>
+                  <input type="number" class="form-control at-scene__form-input" id="duracao" name="duracao" placeholder="Ex: 2.5" step="0.01" min="0">
+                  <div class="invalid-feedback">
+                    Informe uma duração válida.
+                  </div>
+              </div>
+                <div class="col-md-4">
+                  <label for="tempoProducao" class="form-label at-scene__form-label">Tempo de produção (minutos)</label>
+                  <input type="number" class="form-control at-scene__form-input" id="tempoProducao" name="tempoProducao" placeholder="Ex: 50" min="1">
+                  <div class="invalid-feedback">
+                    Informe um tempo de produção válido.
+                  </div>
+                </div>
+                </div>
+
+              <h3 class="at-scene__section-title">Cronograma</h3>
+              <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                  <label for="data_inicio" class="form-label at-scene__form-label">Data de Início</label>
+                  <input type="date" class="form-control at-scene__form-input" id="data_inicio" name="data_inicio">
+                </div>
+                <div class="col-md-4">
+                  <label for="data_previsao" class="form-label at-scene__form-label">Previsão de Entrega</label>
+                  <input type="date" class="form-control at-scene__form-input" id="data_previsao" name="data_previsao">
+                </div>
+                <div class="col-md-4">
+                  <label for="data_conclusao" class="form-label at-scene__form-label">Data de Conclusão</label>
+                  <input type="date" class="form-control at-scene__form-input" id="data_conclusao" name="data_conclusao">
+                </div>
+              </div>
+
+              <h3 class="at-scene__section-title">Anotações</h3>
+              <div class="mb-3">
+                <label for="descricao" class="form-label at-scene__form-label">Descrição</label>
+                <textarea class="form-control at-scene__form-textarea" id="descricao" name="descricao" rows="3" placeholder="Descreva brevemente a cena..."></textarea>
+              </div>
+              <div class="mb-0">
+                <label for="observacoes" class="form-label at-scene__form-label">Observações</label>
+                <textarea class="form-control at-scene__form-textarea" id="observacoes" name="observacoes" rows="3" placeholder="Alguma observação adicional?"></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer th:replace="~{componentes/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const codigoInput = document.getElementById('numero_codigo');
+    const sceneTitlePreview = document.getElementById('sceneTitlePreview');
+
+    if (codigoInput && sceneTitlePreview) {
+      codigoInput.addEventListener('input', function () {
+        sceneTitlePreview.textContent = this.value.trim() || 'Nova Cena';
+      });
+    }
+
+    const form = document.getElementById('criarCenaForm');
+    if (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    }
+  });
+</script>
+</body>
+</html>

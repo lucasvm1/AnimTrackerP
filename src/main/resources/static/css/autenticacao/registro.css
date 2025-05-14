@@ -1,0 +1,229 @@
+:root {
+    /* Paleta e variáveis para reaproveitamento */
+    --primary-gradient: linear-gradient(135deg, #9d8eff, #a64ba2);
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #e0e0e0;
+    --text-muted: #b0b0b0;
+    --input-bg: rgba(157, 142, 255, 0.05);
+    --input-border: #2c2c44;
+}
+
+/* Reset e padrão global */
+* {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fundo centralizado da tela de registro */
+.at-registro {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Card central de registro */
+.at-registro__card {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Logo/nome da aplicação em gradiente */
+.at-registro__brand {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 10px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Subtítulo atenuado */
+.at-registro__subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+/* Campo de input padrão com ícone */
+.at-registro__input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.at-registro__input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-color);
+    outline: none;
+}
+
+.at-registro__input-group i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+/* Campo de senha com visibilidade e flexível */
+.at-registro__password-input-group {
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.at-registro__password-input-group i {
+    padding: 0 10px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.at-registro__password-input-group input {
+    flex: 1;
+    padding: 15px 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.at-registro__password-input-group input:focus {
+    outline: none;
+}
+
+.at-registro__password-input-group .toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px 10px;
+    margin-left: 12px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.at-registro__password-input-group .toggle-password:hover {
+    color: var(--text-color);
+}
+
+/* Animação no botão de registrar */
+@keyframes registro-glow-slide {
+    0% {
+        left: -80%;
+    }
+    100% {
+        left: 130%;
+    }
+}
+
+.at-registro__btn-primary {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary-gradient);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+}
+
+.at-registro__btn-primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: skewX(-25deg);
+    z-index: 0;
+    animation: registro-glow-slide 5s linear infinite;
+}
+
+.at-registro__btn-primary:hover {
+    transform: translateY(-2px);
+    transition: transform 0.5s ease;
+}
+
+/* Botão Google (flat, com cor de destaque no ícone) */
+.at-registro__btn-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.at-registro__btn-google:hover {
+    transform: translateY(-2px);
+    transition: transform 0.5s ease;
+}
+
+.at-registro__btn-google i {
+    margin-right: 10px;
+    color: #ea4335;
+}
+
+/* Termos de uso, link discreto */
+.at-registro__terms {
+    font-size: 0.79rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.at-registro__terms a {
+    color: #9d8eff;
+    text-decoration: none;
+}
+
+/* Esconde ícone do datepicker padrão para controle visual customizado */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* Links de navegação auxiliares */
+.at-registro__links {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.at-registro__links a {
+    color: #9d8eff;
+    text-decoration: none;
+}
+
+.at-registro__links a:hover,
+.at-registro__terms a:hover {
+    text-decoration: underline;
+}

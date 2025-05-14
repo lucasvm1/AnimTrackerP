@@ -1,0 +1,39 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with gradient from your site -->
+  <defs>
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9d8eff" />
+      <stop offset="100%" stop-color="#a64ba2" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#primaryGradient)" />
+  <circle cx="50" cy="50" r="44" fill="#2a2a40" />
+  
+  <!-- Animation Film Strip -->
+  <rect x="25" y="30" width="50" height="40" rx="4" ry="4" fill="#1a1a2e" />
+  
+  <!-- Film Holes -->
+  <circle cx="32" cy="35" r="3" fill="#9d8eff" />
+  <circle cx="32" cy="45" r="3" fill="#9d8eff" />
+  <circle cx="32" cy="55" r="3" fill="#9d8eff" />
+  <circle cx="32" cy="65" r="3" fill="#9d8eff" />
+  
+  <circle cx="68" cy="35" r="3" fill="#a64ba2" />
+  <circle cx="68" cy="45" r="3" fill="#a64ba2" />
+  <circle cx="68" cy="55" r="3" fill="#a64ba2" />
+  <circle cx="68" cy="65" r="3" fill="#a64ba2" />
+  
+  <!-- Progress Bars -->
+  <rect x="40" y="40" width="20" height="5" rx="2" ry="2" fill="#9d8eff" />
+  <rect x="40" y="48" width="15" height="5" rx="2" ry="2" fill="#a64ba2" opacity="0.8" />
+  <rect x="40" y="56" width="7" height="5" rx="2" ry="2" fill="#e8e8e8" opacity="0.6" />
+  
+  <!-- Play/Tracking Symbol -->
+  <circle cx="50" cy="75" r="10" fill="url(#primaryGradient)" />
+  <polygon points="46,70 46,80 56,75" fill="#e8e8e8" />
+  
+  <!-- Glow Effect -->
+  <circle cx="50" cy="50" r="46" fill="none" stroke="url(#primaryGradient)" stroke-width="1" opacity="0.6" />
+</svg>

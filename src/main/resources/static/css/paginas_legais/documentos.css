@@ -1,0 +1,128 @@
+:root {
+    --bg-color: #1a1a2e;
+    --text-color: #e8e8e8;
+    --text-muted-color: rgba(232, 232, 232, 0.7);
+    --accent-color: #a64ba2;
+    --card-bg-transparent: rgba(42, 42, 64, 0.3);
+    --link-color: #9d8eff;
+    --link-hover-color: #bfb5ff;
+    --heading-color: var(--primary-color-start, #9d8eff);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: "Poppins", sans-serif;
+}
+
+.at-document__container {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+.at-document__content-wrapper {
+    background-color: var(--card-bg-transparent);
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.at-document__title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.at-document__last-updated {
+    font-size: 0.85rem;
+    color: var(--text-muted-color);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.at-document__section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.at-document__section-title:first-of-type {
+    margin-top: 0.5rem;
+}
+
+.at-document__text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-muted-color);
+    margin-bottom: 1rem;
+}
+
+.at-document__text strong {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.at-document__text a {
+    color: var(--link-color);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.at-document__text a:hover {
+    color: var(--link-hover-color);
+}
+
+.at-document__list {
+    list-style-position: outside;
+    padding-left: 20px;
+    margin-bottom: 1rem;
+}
+
+.at-document__list li {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-muted-color);
+    margin-bottom: 0.5rem;
+}
+
+.at-document__contact-email {
+    font-weight: 600;
+    color: var(--link-color);
+}
+
+@media (max-width: 768px) {
+    .at-document__content-wrapper {
+        padding: 25px 30px;
+    }
+    .at-document__title {
+        font-size: 1.8rem;
+    }
+    .at-document__section-title {
+        font-size: 1.3rem;
+    }
+    .at-document__text,
+    .at-document__list li {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .at-document__content-wrapper {
+        padding: 20px;
+    }
+    .at-document__title {
+        font-size: 1.6rem;
+    }
+    .at-document__section-title {
+        font-size: 1.2rem;
+    }
+}

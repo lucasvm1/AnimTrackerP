@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimTracker - Editar Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/componentes/header.css}">
+    <link rel="stylesheet" th:href="@{/css/componentes/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/usuario/editar.css}"> <link rel="stylesheet" th:href="@{/css/main.css}">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+
+<div th:replace="~{componentes/header :: header(currentPage='perfil')}"></div>
+
+<div class="content">
+    <main>
+        <div class="at-profile__page-container">
+            <div class="at-profile__container-fluid">
+
+                <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${erro}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${sucesso}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <form th:action="@{/perfil/editar}" method="post" th:object="${usuario}" id="editarPerfilForm">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{auth_provider}" />
+                    <input type="hidden" th:field="*{status}" />
+
+
+                    <div class="at-profile__actions-container">
+                        <button type="submit" class="btn at-profile__btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Salvar Alterações
+                        </button>
+                        <a class="btn at-profile__btn-secondary" th:href="@{/perfil}">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+                    </div>
+
+                    <div class="card at-profile__card">
+                        <div class="row g-0">
+                            <div class="col-lg-3 at-profile__card-header">
+                                <div class="at-profile__avatar-wrapper">
+                                    <div class="at-profile__avatar-initials" id="avatarPreview" th:text="${#strings.isEmpty(usuario.nome) ? 'U' : #strings.substring(usuario.nome, 0, 1)}">U</div>
+                                </div>
+                                <h2 class="at-profile__name-preview" id="nomePreview" th:text="${usuario.nome ?: 'Editar Perfil'}">Editar Perfil</h2>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="at-profile__card-body">
+                                    <h3 class="at-profile__section-title">Informações Pessoais</h3>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="nome" class="form-label at-profile__form-label">Nome Completo <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control at-profile__form-input" id="nome" th:field="*{nome}" placeholder="Seu nome completo" required>
+                                            <div class="invalid-feedback">Por favor, informe seu nome.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label at-profile__form-label">Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control at-profile__form-input" id="email" th:field="*{email}" placeholder="seuemail@exemplo.com" required>
+                                            <div class="invalid-feedback">Por favor, informe um email válido.</div>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="dataNascimento" class="form-label at-profile__form-label">Data de Nascimento</label>
+                                            <input type="date" class="form-control at-profile__form-input" id="dataNascimento" th:value="${usuario.data_nascimento != null ? #temporals.format(usuario.data_nascimento, 'yyyy-MM-dd') : ''}" name="data_nascimento" placeholder="dd/mm/aaaa">
+                                        </div>
+                                    </div>
+
+                                    <h3 class="at-profile__section-title">Alterar Senha</h3>
+                                    <p class="at-profile__form-hint" th:if="*{auth_provider != 'Local'}">
+                                        <i class="bi bi-info-circle-fill me-1"></i> Você está autenticado via <span th:text="*{auth_provider}"></span>. A alteração de senha não é aplicável.
+                                    </p>
+                                    <div th:if="*{auth_provider == 'Local'}">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label for="novaSenha" class="form-label at-profile__form-label">Nova Senha</label>
+                                                <input type="password" class="form-control at-profile__form-input" id="novaSenha" name="novaSenha" placeholder="Deixe em branco para não alterar">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="confirmarNovaSenha" class="form-label at-profile__form-label">Confirmar Nova Senha</label>
+                                                <input type="password" class="form-control at-profile__form-input" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Repita a nova senha">
+                                                <div class="invalid-feedback" id="senhaMismatchFeedback" style="display: none;">As senhas não coincidem.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{componentes/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const nomeInput = document.getElementById('nome');
+        const nomePreview = document.getElementById('nomePreview');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const originalNome = nomePreview.textContent;
+        const originalInitial = avatarPreview.textContent;
+
+        function updatePreview() {
+            const nomeValue = nomeInput.value.trim();
+            if (nomeValue) {
+                nomePreview.textContent = nomeValue;
+                avatarPreview.textContent = nomeValue.charAt(0).toUpperCase();
+            } else {
+                nomePreview.textContent = originalNome || 'Editar Perfil';
+                avatarPreview.textContent = originalInitial || 'E';
+            }
+        }
+
+        if (nomeInput && nomePreview && avatarPreview) {
+            nomeInput.addEventListener('input', updatePreview);
+        }
+
+        const form = document.getElementById('editarPerfilForm');
+        const novaSenhaInput = document.getElementById('novaSenha');
+        const confirmarNovaSenhaInput = document.getElementById('confirmarNovaSenha');
+        const senhaMismatchFeedback = document.getElementById('senhaMismatchFeedback');
+
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                if (novaSenhaInput && confirmarNovaSenhaInput && novaSenhaInput.value !== confirmarNovaSenhaInput.value) {
+                    confirmarNovaSenhaInput.classList.add('is-invalid');
+                    senhaMismatchFeedback.style.display = 'block';
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else if (confirmarNovaSenhaInput) {
+                    confirmarNovaSenhaInput.classList.remove('is-invalid');
+                    senhaMismatchFeedback.style.display = 'none';
+                }
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        }
+        if (confirmarNovaSenhaInput) {
+            confirmarNovaSenhaInput.addEventListener('input', function() {
+                if (confirmarNovaSenhaInput.classList.contains('is-invalid')) {
+                    confirmarNovaSenhaInput.classList.remove('is-invalid');
+                    senhaMismatchFeedback.style.display = 'none';
+                }
+            });
+        }
+        if (novaSenhaInput) {
+            novaSenhaInput.addEventListener('input', function() {
+                if (confirmarNovaSenhaInput && confirmarNovaSenhaInput.classList.contains('is-invalid') && novaSenhaInput.value === confirmarNovaSenhaInput.value) {
+                    confirmarNovaSenhaInput.classList.remove('is-invalid');
+                    senhaMismatchFeedback.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
