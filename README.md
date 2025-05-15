@@ -14,7 +14,6 @@ Desenvolvida para demonstrar domínio prático de backend, frontend, arquitetura
 * Instalação e execução
 * Estrutura de pacotes
 * API REST
-* Contribuição
 
 ---
 
